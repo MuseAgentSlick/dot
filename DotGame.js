@@ -20,7 +20,7 @@ export default class DotGame {
         1) PASS: test case for choosing smallest area to give
         2) PASS: 2nd test case for choosing smallest area to give
         3) PASS: 3rd test case for choosing smallest area to give (smallest group of 2s is wrong) - oops, test 2 already covers this...
-        4) AI-heurisic FAIL: test case for knowing when to not take a square
+        4) AI-heuristic FAIL: test case for knowing when to not take a square
         5) PASS: AI wasn't giving a single box before larger areas due to a bug
         6) AI-heuristic FAIL: not best to give smallest available area - ACTUALLY IF OTHER PLAYER IS SMART, THERE IS NO WAY FOR PLAYER 1 TO WIN...
         7) AI-heuristic FAIL: don't take squares
@@ -80,9 +80,9 @@ export default class DotGame {
             this.hLines = Array.from({ length: width }, () => Array(height+1).fill(0));
             this.squares = Array.from({ length: height }, () => Array(width).fill(0));
             this.squaresLeft = height * width;
-            document.getElementById('player1Type').selectedIndex = 1;
+            document.getElementById('player1Type').selectedIndex = 2;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-mcts');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -118,9 +118,9 @@ export default class DotGame {
             this.hLines = Array.from({ length: width }, () => Array(height+1).fill(0));
             this.squares = Array.from({ length: height }, () => Array(width).fill(0));
             this.squaresLeft = height * width;
-            document.getElementById('player1Type').selectedIndex = 1;
+            document.getElementById('player1Type').selectedIndex = 2;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-mcts');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -193,9 +193,9 @@ export default class DotGame {
             this.hLines = Array.from({ length: width }, () => Array(height+1).fill(0));
             this.squares = Array.from({ length: height }, () => Array(width).fill(0));
             this.squaresLeft = height * width;
-            document.getElementById('player1Type').selectedIndex = 1;
+            document.getElementById('player1Type').selectedIndex = 2;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-mcts');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -219,10 +219,10 @@ export default class DotGame {
             this.hLines = Array.from({ length: width }, () => Array(height+1).fill(0));
             this.squares = Array.from({ length: height }, () => Array(width).fill(0));
             this.squaresLeft = height * width;
-            document.getElementById('player1Type').selectedIndex = 1;
+            document.getElementById('player1Type').selectedIndex = 2;
             document.getElementById('player2Type').selectedIndex = 0;
             this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'human');
-            this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'ai-heuristic');
+            this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'ai-mcts');
     
             this.players[1].ai = false;
             this.move("h,0,0");
