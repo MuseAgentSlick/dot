@@ -515,13 +515,29 @@ export default class DotGame {
         this.turn = 3 - this.turn;
         this.scoreboard.switchActivePlayer(this.turn);
     }
+    // Resolve after the browser has actually painted. A single
+    // requestAnimationFrame fires before the paint, so awaiting just one
+    // still lets a blocking AI think before the previous move appears
+    // (this only happened to work for AI-vs-AI, where the previous move
+    // was painted a full frame earlier). The nested second frame runs
+    // after the paint. The timeout is a fallback for when frames are
+    // throttled, e.g. in a hidden tab.
+    waitForPaint() {
+        return new Promise(resolve => {
+            const fallback = setTimeout(resolve, 100);
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                clearTimeout(fallback);
+                resolve();
+            }));
+        });
+    }
     async checkAImove() {
         const curPlayer = this.turn - 1;
         const oppPlayer = 1 - curPlayer;
         if(this.players[this.turn-1].ai) {
             // Let the browser paint the previous move before the AI blocks
             // the main thread while thinking.
-            await new Promise(r => requestAnimationFrame(r));
+            await this.waitForPaint();
             const m = await this.players[this.turn-1].aiEngine.move(this.hLines,this.vLines,this.squaresLeft);
             this.move(m);
         }
