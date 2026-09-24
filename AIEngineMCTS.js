@@ -169,7 +169,7 @@ export class Node {
     
         let percentCurPlayerBoxes = child.percentAIBoxes;
         if(this.turn == 0) {
-            percentCurPlayerBoxes = 1 - percentCurPlayerBoxes;
+            percentCurPlayerBoxes = child.visits - percentCurPlayerBoxes;
         }
         const exploitation = percentCurPlayerBoxes / child.visits;
 
