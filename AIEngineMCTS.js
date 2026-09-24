@@ -21,6 +21,27 @@ function legalMoves(h,v) {
 function cloneMatrix(matrix) {
     return matrix.map(row => [...row]);
 }
+// Moves that close at least one box (the missing edge of every 3-sided box).
+// When takes exist, any optimal player takes instead of playing elsewhere:
+// refusing a take just hands the box (and the extra turn) to the opponent.
+function takeMoves(h,v) {
+    const takes = [];
+    const height = v.length, width = h.length;
+    for(let y=0; y<height; y++) {
+        for(let x=0; x<width; x++) {
+            const top = h[x][y] > 0, bottom = h[x][y+1] > 0;
+            const left = v[y][x] > 0, right = v[y][x+1] > 0;
+            if(top + bottom + left + right == 3) {
+                if(!top) takes.push(['h',x,y]);
+                else if(!bottom) takes.push(['h',x,y+1]);
+                else if(!left) takes.push(['v',y,x]);
+                else takes.push(['v',y,x+1]);
+            }
+        }
+    }
+    // two adjacent 3-sided boxes can share the same missing edge
+    return takes.filter((m,i) => takes.findIndex(n => n[0]==m[0]&&n[1]==m[1]&&n[2]==m[2]) == i);
+}
 function makeMove(h, v, move) {
     const [type, i, j] = move;
     let x,y;
@@ -149,7 +170,13 @@ export class Node {
         this.children = [];
         this.visits = 0;
         this.percentAIBoxes = 0; // % of remaining boxes AI wins
-        this.untried_moves = legalMoves(this.h,this.v);
+        // Forced takes: below the root, when a box can be taken the tree only
+        // considers taking it. Exploring non-takes there just lets UCT try
+        // blunders that the greedy rollout punishes with 0.00/1.00 extremes,
+        // drowning the real signal. The root keeps all moves so it can still
+        // find "don't take" sacrifices like the winning v,1,2.
+        const takes = this.parent ? takeMoves(this.h,this.v) : [];
+        this.untried_moves = takes.length > 0 ? takes : legalMoves(this.h,this.v);
     }
     selectChild() {
         let bestChild = null;
