@@ -1,3 +1,5 @@
+import AIEngineHeuristic from './AIEngineHeuristic.js';
+
 function legalMoves(h,v) {
     const moves = [];
     for(let i=0; i<h.length; i++) {
@@ -15,9 +17,6 @@ function legalMoves(h,v) {
         }
     }
     return moves;
-}
-function getRandomUntriedMove(untried_moves) {
-    return untried_moves[Math.floor(Math.random() * untried_moves.length)];
 }
 function cloneMatrix(matrix) {
     return matrix.map(row => [...row]);
@@ -61,6 +60,7 @@ function checkClosed(y,x,h,v) {
 export default class AIEngineMCTS { 
     constructor(iterations) {
         this.iterations = iterations;
+        this.rolloutPolicy = new AIEngineHeuristic();
     }
     async move(h,v,squaresLeft) {
 
@@ -74,8 +74,11 @@ export default class AIEngineMCTS {
         for(let i=0; i<this.iterations; i++) {
             node = root;
 
-            // traverse by maximizing UCB1 until we reach leaf node
-            while(node.children.length > 0) {
+            // Selection: descend while the node is fully expanded. A node that
+            // still has untried moves stops here so it can be expanded;
+            // otherwise the tree would grow as a single chain and the other
+            // moves would never be tried.
+            while(node.children.length > 0 && node.untried_moves.length == 0) {
                 node = node.selectChild();
             }
 
@@ -104,7 +107,7 @@ export default class AIEngineMCTS {
             let curV = cloneMatrix(node.v);
             let curTurn = node.turn;
             while((moves = legalMoves(curH,curV)) && moves.length > 0) {
-                closed = makeMove(curH,curV,getRandomUntriedMove(moves));
+                closed = makeMove(curH,curV,this.rolloutPolicy.chooseMove(curH,curV));
                 if(curTurn == 1) {
                     AIboxesClosed += closed;
                 }
