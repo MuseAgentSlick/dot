@@ -1,4 +1,4 @@
-export default class AIEngineHeuristic { 
+export default class AIEngineHeuristic {
     constructor() {
         this.h = [];
         this.v = [];
@@ -18,6 +18,14 @@ export default class AIEngineHeuristic {
 
         await this.sleep(100);
 
+        const m = this.chooseMove(h,v);
+        return m[0]+','+m[1]+','+m[2];
+    }
+    // Synchronous move choice, also used as the MCTS rollout policy.
+    // Returns [type, i, j]. Deliberately not optimal: rollouts need a fast,
+    // sensible, slightly random signal, and the tree search corrects the rest.
+    chooseMove(h,v) {
+
         this.h = h;
         this.v = v;
         this.x = this.h.length;
@@ -31,16 +39,16 @@ export default class AIEngineHeuristic {
             for(j=0; j<this.x; j++) {
                 if(this.squares[i][j] == 3) {
                     if(this.h[j][i] == 0) {
-                        return "h,"+j+","+i;
+                        return ['h',j,i];
                     }
                     if(this.h[j][i+1] == 0) {
-                        return "h,"+j+","+(i+1);
+                        return ['h',j,i+1];
                     }
                     if(this.v[i][j] == 0) {
-                        return "v,"+i+","+j;
+                        return ['v',i,j];
                     }
                     if(this.v[i][j+1] == 0) {
-                        return "v,"+i+","+(j+1);
+                        return ['v',i,j+1];
                     }
                 }
             }
@@ -55,23 +63,23 @@ export default class AIEngineHeuristic {
                     if(this.h[j][i] == 0) {
                         // if we're in top row or above us is <2, top can be taken
                         if(i==0 || this.squares[i-1][j] < 2) {
-                            moves.push("h,"+j+","+i);
+                            moves.push(['h',j,i]);
                         }
                     }
                     // if we're on bottom row, bottom can be taken
                     if(i==(this.y-1) && this.h[j][i+1] == 0) {
-                        moves.push("h,"+j+","+(i+1));
+                        moves.push(['h',j,i+1]);
                     }
                     // check left of each box is available
                     if(this.v[i][j] == 0) {
                         // if we're in first column or left of us is <2, left can be taken
                         if(j==0 || this.squares[i][j-1] < 2) {
-                            moves.push("v,"+i+","+j);
+                            moves.push(['v',i,j]);
                         }
                     }
                     // if we're in last column, right can be taken
                     if(j==(this.x-1) && this.v[i][j+1] == 0) {
-                        moves.push("v,"+i+","+(j+1));
+                        moves.push(['v',i,j+1]);
                     }
                 }
             }
@@ -112,16 +120,16 @@ export default class AIEngineHeuristic {
         // pick random square from smallestArea and set moves to all available borders
         [i,j] = this.smallestArea[Math.floor(Math.random() * this.smallestArea.length)].split(',').map(num => parseInt(num));
         if(this.h[j][i] == 0) {
-            moves.push("h,"+j+","+i);
+            moves.push(['h',j,i]);
         }
         if(this.h[j][i+1] == 0) {
-            moves.push("h,"+j+","+(i+1));
+            moves.push(['h',j,i+1]);
         }
         if(this.v[i][j] == 0) {
-            moves.push("v,"+i+","+j);
+            moves.push(['v',i,j]);
         }
         if(this.v[i][j+1] == 0) {
-            moves.push("v,"+i+","+(j+1));
+            moves.push(['v',i,j+1]);
         }
 
         // choose random move
@@ -164,7 +172,7 @@ export default class AIEngineHeuristic {
         if(j<(this.x-1) && this.v[i][j+1] == 0 && this.squares[i][j+1] == 2) {
             this.addAdjacent(i+","+(j+1));
         }
- 
+
     }
     countSquares() {
         this.squares = [];
