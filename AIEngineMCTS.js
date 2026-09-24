@@ -79,25 +79,23 @@ export default class AIEngineMCTS {
                 node = node.selectChild();
             }
 
-            // if this node has been visited add children and set node to first child
-            if(node.visits > 0) {
-                for(move of node.untried_moves) {
-                    // add children
-                    newH = cloneMatrix(node.h);
-                    newV = cloneMatrix(node.v);
-                    closed = makeMove(newH,newV,move);
-                    newNode = new Node(newH,newV,node.turn,node,move);
-                    if(node.turn == 1) {
-                        newNode.aiSquares += closed;
-                    }
-                    if(closed == 0) {
-                        newNode.turn = 1 - newNode.turn;
-                    }
-                    node.children.push(newNode);
+            // if this node has been visited, expand a single child for one
+            // untried move and simulate from it
+            if(node.visits > 0 && node.untried_moves.length > 0) {
+                const pick = node.untried_moves.splice(
+                    Math.floor(Math.random() * node.untried_moves.length), 1)[0];
+                newH = cloneMatrix(node.h);
+                newV = cloneMatrix(node.v);
+                closed = makeMove(newH,newV,pick);
+                newNode = new Node(newH,newV,node.turn,node,pick);
+                if(node.turn == 1) {
+                    newNode.aiSquares += closed;
                 }
-                if(node.children.length) {
-                    node = node.children[0];
+                if(closed == 0) {
+                    newNode.turn = 1 - newNode.turn;
                 }
+                node.children.push(newNode);
+                node = newNode;
             }
 
             // rollout node (simulation)
