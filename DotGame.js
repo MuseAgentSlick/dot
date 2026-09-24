@@ -46,7 +46,7 @@ export default class DotGame {
             this.squaresLeft = height * width;
             document.getElementById('player1Type').selectedIndex = 1;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
 
             this.players[0].ai = false;
@@ -82,7 +82,7 @@ export default class DotGame {
             this.squaresLeft = height * width;
             document.getElementById('player1Type').selectedIndex = 1;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -120,7 +120,7 @@ export default class DotGame {
             this.squaresLeft = height * width;
             document.getElementById('player1Type').selectedIndex = 1;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -157,7 +157,7 @@ export default class DotGame {
             document.getElementById('player1Type').selectedIndex = 0;
             document.getElementById('player2Type').selectedIndex = 1;
             this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'human');
-            this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'ai');
+            this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'ai-heuristic');
     
             this.players[1].ai = false;
             this.move("h,0,3");
@@ -195,7 +195,7 @@ export default class DotGame {
             this.squaresLeft = height * width;
             document.getElementById('player1Type').selectedIndex = 1;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -222,7 +222,7 @@ export default class DotGame {
             document.getElementById('player1Type').selectedIndex = 1;
             document.getElementById('player2Type').selectedIndex = 0;
             this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'human');
-            this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'ai');
+            this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'ai-heuristic');
     
             this.players[1].ai = false;
             this.move("h,0,0");
@@ -274,7 +274,7 @@ export default class DotGame {
             this.squaresLeft = height * width;
             document.getElementById('player1Type').selectedIndex = 1;
             document.getElementById('player2Type').selectedIndex = 0;
-            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai');
+            this.players[0] = new Player(this.players[0].name,this.players[0].color,this.players[0].hover,'ai-heuristic');
             this.players[1] = new Player(this.players[1].name,this.players[1].color,this.players[1].hover,'human');
     
             this.players[0].ai = false;
@@ -512,16 +512,14 @@ export default class DotGame {
         this.ctx.fill();
     }
     toggleTurn() {
-        if(this.turn == 1) {
-            this.turn = 2;
-        } else {
-            this.turn = 1;
-        }
+        this.turn = 3 - this.turn;
         this.scoreboard.switchActivePlayer(this.turn);
     }
     async checkAImove() {
+        const curPlayer = this.turn - 1;
+        const oppPlayer = 1 - curPlayer;
         if(this.players[this.turn-1].ai) {
-            const m = await this.players[this.turn-1].aiEngine.move(this.hLines,this.vLines);
+            const m = await this.players[this.turn-1].aiEngine.move(this.hLines,this.vLines,this.squaresLeft);
             this.move(m);
         }
     }

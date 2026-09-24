@@ -1,42 +1,31 @@
 export default class Scoreboard {
     constructor(p1Card,p2Card,player1ScoreOutput,player2ScoreOutput) {
-        this.p1Card = p1Card;
-        this.p2Card = p2Card;
-        this.player1Score = 0;
-        this.player2Score = 0;
-        this.player1ScoreOutput = player1ScoreOutput;
-        this.player2ScoreOutput = player2ScoreOutput;
+        this.cards = [p1Card,p2Card];
+        this.scores = [0,0];
+        this.scoreOutput = [player1ScoreOutput,player2ScoreOutput];
 
     }
     switchActivePlayer(activePlayer) {
-        if (activePlayer === 1) {
-            p1Card.classList.add('active');
-            p2Card.classList.remove('active');
-        } else {
-            p2Card.classList.add('active');
-            p1Card.classList.remove('active');
-        }
+        activePlayer--;
+        let inactivePlayer = 1 - activePlayer;
+        this.cards[activePlayer].classList.add('active');
+        this.cards[inactivePlayer].classList.remove('active');
     }
     point(player) {
-        if(player === 1) {
-            this.player1Score++;
-            this.player1ScoreOutput.textContent = this.player1Score;
-        } else {
-            this.player2Score++;
-            this.player2ScoreOutput.textContent = this.player2Score;
-        }
+        player--;
+        this.scores[player]++;
+        this.scoreOutput[player].textContent = this.scores[player];
     }
     reset() {
-        this.player1Score = 0;
-        this.player2Score = 0;
-        this.player1ScoreOutput.textContent = this.player1Score;
-        this.player2ScoreOutput.textContent = this.player2Score;
+        this.scores = [0,0];
+        this.scoreOutput[0].textContent = 0;
+        this.scoreOutput[1].textContent = 0;
         this.switchActivePlayer(1);
     }
     whoWon() {
-        if(this.player1Score > this.player2Score) {
+        if(this.scores[0] > this.scores[1]) {
             return 1;
-        } else if(this.player2Score > this.player1Score) {
+        } else if(this.scores[1] > this.scores[0]) {
             return 2;
         } else {
             return 0;

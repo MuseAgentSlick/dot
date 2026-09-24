@@ -12,11 +12,10 @@ function init() {
     const widthValue = document.getElementById('widthValue');
     const newGameButton = document.getElementById('newGameButton');
     let dotGame;
-    const p1Card = document.getElementById('p1Card');
-    const p2Card = document.getElementById('p2Card');
-    const player1Score = document.getElementById('player1Score');
-    const player2Score = document.getElementById('player2Score');
-    let scoreboard = new Scoreboard(p1Card,p2Card,player1Score,player2Score);
+    let scoreboard = new Scoreboard(document.getElementById('p1Card'),
+                                    document.getElementById('p2Card'),
+                                    document.getElementById('player1Score'),
+                                    document.getElementById('player2Score'));
     heightRange.addEventListener('input', (e) => {
         heightValue.textContent = e.target.value;
     });
@@ -26,9 +25,11 @@ function init() {
     newGameButton.addEventListener('click', () => {
         const player1Type = document.getElementById('player1Type');
         const player2Type = document.getElementById('player2Type');
+        const height = parseInt(heightRange.value);
+        const width = parseInt(widthRange.value);
         const player1 = new Player('1','#BF616A','#E5B3B8',player1Type.options[player1Type.selectedIndex].value);
         const player2 = new Player('2','#5E81AC','#88C0D0',player2Type.options[player2Type.selectedIndex].value);
-        dotGame = new DotGame(parseInt(heightRange.value),parseInt(widthRange.value),player1,player2,ctx,scoreboard);
+        dotGame = new DotGame(height,width,player1,player2,ctx,scoreboard);
         scoreboard.reset();
         dotGame.render();
     });
