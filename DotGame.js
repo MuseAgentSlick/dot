@@ -519,6 +519,9 @@ export default class DotGame {
         const curPlayer = this.turn - 1;
         const oppPlayer = 1 - curPlayer;
         if(this.players[this.turn-1].ai) {
+            // Let the browser paint the previous move before the AI blocks
+            // the main thread while thinking.
+            await new Promise(r => requestAnimationFrame(r));
             const m = await this.players[this.turn-1].aiEngine.move(this.hLines,this.vLines,this.squaresLeft);
             this.move(m);
         }
